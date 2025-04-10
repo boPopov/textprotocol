@@ -38,10 +38,8 @@ func (server *Server) HandleConnections() {
 			continue
 		}
 
-		connectionHandler.UserProtocolConnectionHandler(connection) //Add new package that will handle the logic behind the protocols
-		break
+		go connectionHandler.UserProtocolConnectionHandler(connection) //Add new package that will handle the logic behind the protocols
 	}
-	server.Close()
 }
 
 func (server *Server) Close() {

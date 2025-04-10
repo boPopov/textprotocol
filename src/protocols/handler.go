@@ -26,6 +26,12 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 			break
 		}
 
+		if allowed := rateLimit.CommandRateLimit.Allow(); !allowed {
+			connection.Write([]byte("Please slow Down!\n"))
+			rateLimit.Release()
+			break
+		}
+
 		fmt.Println("Input is:", inputLine)
 
 		enteredProtocol := strings.TrimSpace(inputLine)

@@ -6,7 +6,7 @@ import(
 
 // Defining the behavior of te Server Structure
 type Serverer interface{
-	Setup(port string)
+	Setup()
 	HandleConnections()
 	Close()
 }
@@ -17,7 +17,7 @@ type Server struct {
 	Serverer
 }
 
-func (server *Server) Setup(port string) {
+func (server *Server) Setup() {
 	var err error
 	server.Listener, err = net.Listen("tcp", fmt.Sprintf(":%s", server.Port))
 	if err != nil {

@@ -25,7 +25,7 @@ func readJson() (port string, errEncountered error) {
 
 	decoder := json.NewDecoder(file)
 	errEncountered = decoder.Decode(&port)
-	if err != nil {
+	if errEncountered != nil {
 		fmt.Println("Could not decode the JSON file:", err)
 		return
 	}

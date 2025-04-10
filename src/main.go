@@ -1,13 +1,17 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
+
+	server "github.com/boPopov/textprotocol/src/server"
 )
 
-var server server.Server
+var tcpServer server.Server
 
 func init() {
-	server = new(server.Server)
+	tcpServer = server.Server{}
 }
 
 func readJson() (port string, errEncountered error) {
@@ -33,10 +37,11 @@ func main() {
 
 	port, err := readJson()
 	if err != nil {
-		error.Printf("Could not extra the port, because of: %v", err)
+		fmt.Println("Could not extra the port, because of", err)
 	}
+	fmt.Println("Port is: ", port)
 
-	server.Port = port
-	server.Setup()
-	server.HandleConnections()
+	tcpServer.Port = "4242"
+	tcpServer.Setup()
+	tcpServer.HandleConnections()
 }

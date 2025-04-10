@@ -1,19 +1,21 @@
 package server
 
-import(
+import (
+	"fmt"
+	"log"
 	"net"
 )
 
 // Defining the behavior of te Server Structure
-type Serverer interface{
+type Serverer interface {
 	Setup()
 	HandleConnections()
 	Close()
 }
 
 type Server struct {
-	Listener *net.Listen
-	Port	 string
+	Listener net.Listener
+	Port     string
 	Serverer
 }
 
@@ -23,12 +25,12 @@ func (server *Server) Setup() {
 	if err != nil {
 		log.Fatalf("Failed to bind to port: %v", err)
 	}
-	log.Printf("Server is listening on port: %s...", port) //Add new line here.
+	log.Printf("Server is listening on port: %s...", server.Port) //Add new line here.
 }
 
-func (server *Server) HandleConnections(){
+func (server *Server) HandleConnections() {
 	for {
-		connection, err := server.Listener.Accept()
+		_, err := server.Listener.Accept()
 		if err != nil {
 			log.Println("Failed to accept connection:", err)
 			continue

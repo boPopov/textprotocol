@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+
+	connectionHandler "github.com/boPopov/textprotocol/src/protocols"
 )
 
 // Defining the behavior of te Server Structure
@@ -30,13 +32,14 @@ func (server *Server) Setup() {
 
 func (server *Server) HandleConnections() {
 	for {
-		_, err := server.Listener.Accept()
+		connection, err := server.Listener.Accept()
 		if err != nil {
 			log.Println("Failed to accept connection:", err)
 			continue
 		}
 
-		//connectionHandler.UserProtocolConnectionHandler(connection) //Add new package that will handle the logic behind the protocols
+		connectionHandler.UserProtocolConnectionHandler(connection) //Add new package that will handle the logic behind the protocols
+		break
 	}
 	server.Close()
 }

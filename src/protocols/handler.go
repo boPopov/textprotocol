@@ -6,9 +6,11 @@ import (
 	"net"
 	"strings"
 	"time"
+
+	"github.com/boPopov/textprotocol/src/security"
 )
 
-func UserProtocolConnectionHandler(connection net.Conn) {
+func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.RateLimit) {
 	defer connection.Close()
 
 	connection.Write([]byte("220 localhost\n"))
@@ -39,6 +41,7 @@ func UserProtocolConnectionHandler(connection net.Conn) {
 		case "QUIT":
 			connection.Write([]byte("221 Bye!\n"))
 			quit = true
+			rateLimit.Release()
 			return
 		case "EHLO":
 			connection.Write([]byte(fmt.Sprintf("Please to meet you %s\n", ehloName)))

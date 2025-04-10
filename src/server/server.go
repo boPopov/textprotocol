@@ -16,7 +16,7 @@ type Serverer interface {
 	Setup()
 	HandleConnections()
 	Close()
-	CheckRateLimit()
+	CheckRateLimitMap()
 }
 
 type Server struct {
@@ -51,7 +51,7 @@ func (server *Server) HandleConnections() {
 			continue
 		}
 
-		server.CheckRateLimit(ip)
+		server.CheckRateLimitMap(ip)
 		if canAllocate := server.RateLimitPerIp[ip].Allocate(); !canAllocate {
 			connection.Write([]byte("You have reached the maximum amount of connections"))
 			connection.Close()
@@ -61,7 +61,11 @@ func (server *Server) HandleConnections() {
 	}
 }
 
-func (server *Server) CheckRateLimit(ip string) {
+/**
+ * The Purpose of the function is to check if the IP is present in the RateLimitPerIp map.
+ * If the IP is not present in the Map, a new pointer is create of the RateLimit structure and that pointer is set with the default values.
+ */
+func (server *Server) CheckRateLimitMap(ip string) {
 	if _, exists := server.RateLimitPerIp[ip]; !exists {
 		server.RateLimitPerIp[ip] = new(security.RateLimit)
 		server.RateLimitPerIp[ip].CreateRateLimiter()

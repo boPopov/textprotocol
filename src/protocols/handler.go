@@ -19,7 +19,6 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 	ehloName := ""
 
 	for {
-
 		inputLine, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Println("Error while reading the input", err)
@@ -32,8 +31,6 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 			break
 		}
 
-		fmt.Println("Input is:", inputLine)
-
 		enteredProtocol := strings.TrimSpace(inputLine)
 
 		if strings.Contains(enteredProtocol, "EHLO") {
@@ -42,9 +39,18 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 				continue
 			}
 			splitedProtocol := strings.Split(enteredProtocol, " ")
-			fmt.Println(splitedProtocol[1])
-			ehloName = splitedProtocol[1]
-			enteredProtocol = splitedProtocol[0]
+
+			if len(splitedProtocol) == 2 {
+				ehloName = strings.TrimSpace(splitedProtocol[1])
+				enteredProtocol = strings.TrimSpace(splitedProtocol[0])
+			} else {
+				for _, value := range splitedProtocol {
+					if len(value) > 0 && value != "EHLO" {
+						ehloName = value
+					}
+				}
+				enteredProtocol = "EHLO"
+			}
 		}
 
 		switch enteredProtocol {
@@ -64,6 +70,7 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 		default:
 			connection.Write([]byte("Wrong protocol!\n"))
 		}
+
 		if quit {
 			break
 		}

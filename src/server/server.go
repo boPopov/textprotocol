@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -36,7 +37,11 @@ func (server *Server) Setup() {
 	server.RateLimitPerIp = make(map[string]*security.RateLimit)
 }
 
-func (server *Server) HandleConnections() {
+func (server *Server) HandleConnections() error {
+	if server.Listener == nil {
+		return errors.New("Server is not Initialized")
+	}
+
 	for {
 		connection, err := server.Listener.Accept()
 		if err != nil {
@@ -59,6 +64,8 @@ func (server *Server) HandleConnections() {
 			go connectionHandler.UserProtocolConnectionHandler(connection, server.RateLimitPerIp[ip]) //Add new package that will handle the logic behind the protocols
 		}
 	}
+
+	return nil
 }
 
 /**

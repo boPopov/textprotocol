@@ -31,6 +31,8 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 			break
 		}
 
+		inputLine = utils.GetValidCommand(inputLine)
+
 		enteredProtocol := strings.TrimSpace(inputLine)
 
 		if strings.Contains(enteredProtocol, "EHLO") {

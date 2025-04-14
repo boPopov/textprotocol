@@ -6,13 +6,13 @@ import (
 )
 
 type RateLimiter interface {
-	CreateRateLimiter()
+	CreateRateLimiter(maxSessions int)
 	Allocate() bool
 	Release()
 }
 
 type CommandRateLimiter interface {
-	Setup()
+	Setup(maxInputPerInterval int, refillDurationInterval int)
 	Allow() bool
 }
 
@@ -31,10 +31,10 @@ type CommandRateLimit struct {
 	CommandRateLimiter
 }
 
-func (rateLimit *RateLimit) CreateRateLimiter() {
-	rateLimit.Channels = make(chan interface{}, 5)
+func (rateLimit *RateLimit) CreateRateLimiter(maxSessions int, maxInputPerInterval int, refillDurationInterval int) {
+	rateLimit.Channels = make(chan interface{}, maxSessions)
 	rateLimit.CommandRateLimit = new(CommandRateLimit)
-	rateLimit.CommandRateLimit.Setup()
+	rateLimit.CommandRateLimit.Setup(maxInputPerInterval, refillDurationInterval)
 }
 
 func (rateLimit *RateLimit) Allocate() bool {
@@ -54,10 +54,10 @@ func (rateLimit *RateLimit) Release() {
 	<-rateLimit.Channels
 }
 
-func (commandRateLimit *CommandRateLimit) Setup() {
-	commandRateLimit.MaxToken = 5
+func (commandRateLimit *CommandRateLimit) Setup(maxInputPerInterval int, refillDurationInterval int) {
+	commandRateLimit.MaxToken = maxInputPerInterval
 	commandRateLimit.AwailableTokens = commandRateLimit.MaxToken
-	commandRateLimit.RefillDuration = time.Duration(15 * time.Second)
+	commandRateLimit.RefillDuration = time.Duration(refillDurationInterval * time.Second)
 	commandRateLimit.LastTimeRefilled = time.Now()
 }
 

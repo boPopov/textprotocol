@@ -19,41 +19,28 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 	ehloName := ""
 
 	for {
-		inputLine, err := reader.ReadString('\n')
+		inputLine, err := reader.ReadString('\n') //Setting up the session reader stream.
 		if err != nil {
 			fmt.Println("Error while reading the input", err)
 			break
 		}
 
-		if allowed := rateLimit.CommandRateLimit.Allow(); !allowed {
+		if allowed := rateLimit.CommandRateLimit.Allow(); !allowed { //Checking if the user has reached the maximum number of commands entered in the dedicated interval.
 			connection.Write([]byte("Please slow Down!\n"))
-			rateLimit.Release()
+			rateLimit.Release() //Releasing the channel for the Allocated Connection.
 			break
 		}
 
 		enteredProtocol := strings.TrimSpace(inputLine)
 
 		if strings.Contains(enteredProtocol, "EHLO") {
-			if len(enteredProtocol) <= 4 { //Add or section which checks if there is a second command for QUIT and DATE After EHLO
+			if len(enteredProtocol) <= 4 {
 				connection.Write([]byte("550 Invalid EHLO command. The name is missing!\n"))
 				continue
 			}
 			splitedProtocol := strings.Split(enteredProtocol, " ")
-			//Test Later
-			ehloName = strings.TrimSpace(splitedProtocol[len(splitedProtocol) - 1])
+			ehloName = strings.TrimSpace(splitedProtocol[len(splitedProtocol)-1])
 			enteredProtocol = strings.TrimSpace(splitedProtocol[0])
-
-			// if len(splitedProtocol) == 2 {
-			// 	ehloName = strings.TrimSpace(splitedProtocol[1])
-			// 	enteredProtocol = strings.TrimSpace(splitedProtocol[0])
-			// } else {
-			// 	for _, value := range splitedProtocol {
-			// 		if len(value) > 0 && value != "EHLO" {
-			// 			ehloName = value
-			// 		}
-			// 	}
-			// 	enteredProtocol = "EHLO"
-			// }
 		}
 
 		switch enteredProtocol {

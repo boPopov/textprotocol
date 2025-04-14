@@ -12,12 +12,11 @@ import (
 	"github.com/boPopov/textprotocol/src/utils"
 )
 
-// Defining the behavior of te Server Structure
 type Serverer interface {
 	Setup()
 	HandleConnections()
 	Close()
-	CheckRateLimitMap()
+	CheckIPPresence()
 }
 
 type Server struct {
@@ -33,11 +32,15 @@ func (server *Server) Setup() {
 	server.Listener, err = net.Listen("tcp", fmt.Sprintf(":%s", server.Config.Port))
 	if err != nil {
 		log.Fatalf("Failed to bind to port: %v", err)
+		panic(err) // Stopping the program if we can not bind the port specified in the config.json
 	}
-	log.Printf("Server is listening on port: %s...", server.Config.Port) //Add new line here.
+	log.Printf("Server is listening on port: %s...", server.Config.Port)
 	server.RateLimitPerIp = make(map[string]*security.RateLimit)
 }
 
+/**
+ * This function handles all of the incoming Connections into the application.
+ */
 func (server *Server) HandleConnections() error {
 	if server.Listener == nil {
 		return errors.New("Server is not Initialized")
@@ -51,18 +54,18 @@ func (server *Server) HandleConnections() error {
 		}
 		connection.SetReadDeadline(time.Now().Add(time.Duration(int64(server.Config.SessionActiveInterval) * int64(time.Hour)))) //Limiting connection to 2 Hours|Might delete later.
 
-		ip, errClientIp := utils.GetClientIP(connection.RemoteAddr())
+		clientIp, errClientIp := utils.GetClientIP(connection.RemoteAddr())
 		if errClientIp != nil {
 			fmt.Println("Could not extract the ip from the connection")
 			continue
 		}
 
-		server.CheckRateLimitMap(ip)
-		if canAllocate := server.RateLimitPerIp[ip].Allocate(); !canAllocate {
+		server.CheckIPPresence(clientIp)
+		if canAllocate := server.RateLimitPerIp[clientIp].Allocate(); !canAllocate {
 			connection.Write([]byte("You have reached the maximum amount of connections"))
 			connection.Close()
 		} else {
-			go connectionHandler.UserProtocolConnectionHandler(connection, server.RateLimitPerIp[ip]) //Add new package that will handle the logic behind the protocols
+			go connectionHandler.UserProtocolConnectionHandler(connection, server.RateLimitPerIp[clientIp]) //Add new package that will handle the logic behind the protocols
 		}
 	}
 
@@ -73,7 +76,7 @@ func (server *Server) HandleConnections() error {
  * The Purpose of the function is to check if the IP is present in the RateLimitPerIp map.
  * If the IP is not present in the Map, a new pointer is create of the RateLimit structure and that pointer is set with the default values.
  */
-func (server *Server) CheckRateLimitMap(ip string) {
+func (server *Server) CheckIPPresence(ip string) {
 	if _, exists := server.RateLimitPerIp[ip]; !exists {
 		server.RateLimitPerIp[ip] = new(security.RateLimit)
 		server.RateLimitPerIp[ip].CreateRateLimiter(server.Config.RateLimitMaxSessions, server.Config.RateLimitMaxInputPerInterval, server.Config.RateLimitRefillDuration)

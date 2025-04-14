@@ -1,0 +1,15 @@
+=== RUN   TestServerConnection
+2025/04/12 16:11:28 Server is listening on port: 4242...
+    server_test.go:36: Cleint Connection Test has passed
+--- PASS: TestServerConnection (0.10s)
+=== RUN   TestOpenConnection
+2025/04/12 16:11:28 Server is listening on port: 4242...
+    server_test.go:54: Before cmd command
+Error while reading the input EOF
+    server_test.go:63: Successfull connection
+--- PASS: TestOpenConnection (0.62s)
+=== RUN   TestServerClose
+    server_test.go:117: Test Server Closed has passed successfully
+--- PASS: TestServerClose (0.00s)
+PASS
+ok  	github.com/boPopov/textprotocol/tests	0.724s

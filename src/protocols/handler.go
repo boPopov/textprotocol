@@ -35,7 +35,7 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 
 		if strings.Contains(enteredProtocol, "EHLO") {
 			if len(enteredProtocol) <= 4 {
-				connection.Write([]byte("Invalid EHLO command. The name is missing!\n"))
+				connection.Write([]byte("550 Invalid EHLO command. The name is missing!\n"))
 				continue
 			}
 			splitedProtocol := strings.Split(enteredProtocol, " ")

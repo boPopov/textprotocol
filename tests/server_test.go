@@ -29,6 +29,14 @@ func startConnection(t *testing.T) net.Conn {
 	return serverConnection
 }
 
+func readOutput(serverConnection net.Conn, t *testing.T) (reply string, err error) {
+	reply, err = bufio.NewReader(serverConnection).ReadString('\n')
+	if err != nil {
+		t.Fatalf("Failed to read response: %v", err)
+	}
+	return
+}
+
 func TestServerConnection(t *testing.T) {
 	startServer()
 
@@ -37,10 +45,7 @@ func TestServerConnection(t *testing.T) {
 
 	time.Sleep(10 * time.Second)
 
-	reply, err := bufio.NewReader(serverConnection).ReadString('\n')
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
+	reply, _ := readOutput(serverConnection, t)
 
 	if !strings.Contains(reply, "220 localhost") {
 		t.Fail()
@@ -54,10 +59,7 @@ func TestEhloCommand(t *testing.T) {
 
 	time.Sleep(10 * time.Second)
 
-	reply, err := bufio.NewReader(serverConnection).ReadString('\n')
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
+	_, _ := readOutput(serverConnection, t)
 
 	time.Sleep(1 * time.Second)
 
@@ -70,10 +72,7 @@ func TestEhloCommand(t *testing.T) {
 	t.Log("Bytes written", bytesWritten)
 	time.Sleep(5 * time.Second)
 
-	reply, err = bufio.NewReader(serverConnection).ReadString('\n')
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
+	reply, _ := readOutput(serverConnection, t)
 
 	if !strings.Contains(reply, fmt.Sprintf("Please to meet you %s", name)) {
 		t.Fail()
@@ -89,11 +88,7 @@ func TestDateCommand(t *testing.T) {
 
 	time.Sleep(10 * time.Second)
 
-	reply, err := bufio.NewReader(serverConnection).ReadString('\n') //moving from first response.
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
-
+	_, _ := readOutput(serverConnection, t)
 	time.Sleep(1 * time.Second)
 
 	name := "test"
@@ -105,10 +100,7 @@ func TestDateCommand(t *testing.T) {
 	t.Log("Bytes written", bytesWritten)
 	time.Sleep(5 * time.Second)
 
-	reply, err = bufio.NewReader(serverConnection).ReadString('\n')
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
+	reply, _ := readOutput(serverConnection, t)
 
 	bytesWritten, errCommandEntered = fmt.Fprintf(serverConnection, "DATE\n")
 	currentTime := time.Now().Format("02/01/2006T15:04")
@@ -118,10 +110,7 @@ func TestDateCommand(t *testing.T) {
 	t.Log("Bytes written", bytesWritten)
 	time.Sleep(5 * time.Second)
 
-	reply, err = bufio.NewReader(serverConnection).ReadString('\n')
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
+	reply, _ = readOutput(serverConnection, t)
 
 	if !strings.Contains(reply, fmt.Sprintf("250 %s", currentTime)) {
 		t.Fail()
@@ -135,10 +124,7 @@ func TestQuitCommand(t *testing.T) {
 
 	time.Sleep(10 * time.Second)
 
-	reply, err := bufio.NewReader(serverConnection).ReadString('\n')
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
+	_, _ := readOutput(serverConnection, t)
 
 	time.Sleep(1 * time.Second)
 
@@ -149,9 +135,94 @@ func TestQuitCommand(t *testing.T) {
 	t.Log("Bytes written", bytesWritten)
 	time.Sleep(5 * time.Second)
 
-	reply, err = bufio.NewReader(serverConnection).ReadString('\n')
-	if err != nil {
-		t.Fatalf("Failed to read response: %v", err)
-	}
+	reply, _ := readOutput(serverConnection, t)
 
+	if !strings.Contains(reply, "221 Bye!"){
+		t.Fail()
+		t.Log("Response is not '221 Bye!'")
+	}
+}
+
+func TestDateCommandWithoutEhlo(t *testing.T) {
+	serverConnection := startConnection(t)
+	defer serverConnection.Close()
+
+	time.Sleep(10 * time.Second)
+
+	_, _ := readOutput(serverConnection, t)
+
+	time.Sleep(1 * time.Second)
+
+	bytesWritten, errCommandEntered = fmt.Fprintf(serverConnection, "DATE\n")
+	if errCommandEntered != nil {
+		t.Fatalf("Failed to send command: %v", err)
+	}
+	t.Log("Bytes written", bytesWritten)
+	time.Sleep(5 * time.Second)
+
+	reply, _ = readOutput(serverConnection, t)
+
+	if !strings.Contains(reply, "550 Bad state") {
+		t.Fail()
+		t.Logf("Response is not '550 Bad state'")
+	}
+}
+
+func TestEhloCommandWithoutName(t *testing.T) {
+	serverConnection := startConnection(t)
+	defer serverConnection.Close()
+
+	time.Sleep(10 * time.Second)
+
+	_, _ := readOutput(serverConnection, t)
+
+	time.Sleep(1 * time.Second)
+
+	bytesWritten, errCommandEntered := fmt.Fprintf(serverConnection, "EHLO")
+	if errCommandEntered != nil {
+		t.Fatalf("Failed to send command: %v", err)
+	}
+	t.Log("Bytes written", bytesWritten)
+	time.Sleep(5 * time.Second)
+
+	reply, _ := readOutput(serverConnection, t)
+
+	if !strings.Contains(reply, "550 Invalid EHLO command. The name is missing!") {
+		t.Fail()
+		t.Logf("Response is not 'Please to meet you %s'", name)
+	}
+}
+
+func TestInvalidCommand(t *testing.T) {
+	serverConnection := startConnection(t)
+	defer serverConnection.Close()
+
+	time.Sleep(10 * time.Second)
+
+	_, _ := readOutput(serverConnection, t)
+
+	time.Sleep(1 * time.Second)
+
+	bytesWritten, errCommandEntered := fmt.Fprintf(serverConnection, "MYTEST")
+	if errCommandEntered != nil {
+		t.Fatalf("Failed to send command: %v", err)
+	}
+	t.Log("Bytes written", bytesWritten)
+	time.Sleep(5 * time.Second)
+
+	reply, _ := readOutput(serverConnection, t)
+
+	if !strings.Contains(reply, "Wrong protocol!") {
+		t.Fail()
+		t.Logf("Response is not 'Please to meet you %s'", name)
+	}
+}
+
+func TestRateLimitConnections(t *testing.T) {
+	for connectionNumber := 0 ; connectionNumber < 6 ; connectionNumber++ {
+		serverConnection, err := net.Dial("tcp", "localhost:4242")
+		if err != nil {
+			t.Fatalf("Failed to connect to server: %v", err)
+		}
+	}
 }

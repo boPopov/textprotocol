@@ -219,10 +219,25 @@ func TestInvalidCommand(t *testing.T) {
 }
 
 func TestRateLimitConnections(t *testing.T) {
+	connectionNumberSlice := make([]net.Listener)
 	for connectionNumber := 0 ; connectionNumber < 6 ; connectionNumber++ {
+		
 		serverConnection, err := net.Dial("tcp", "localhost:4242")
 		if err != nil {
 			t.Fatalf("Failed to connect to server: %v", err)
 		}
+		connectionNumberSlice.Append(serverConnection)
+		if connectionNumber == 5 {
+			reply, _ := readOutput(serverConnection, t)
+			if !strings.Contains(reply, "You have reached the maximum amount of connections"){
+				t.Fail()
+				t.Log("Rate limit was not reached")
+			}
+		}
+	}
+	
+	for _, connection := range connectionNumberSlice{
+		connection.Close()
+		time.Sleep(1 * time.Second)
 	}
 }

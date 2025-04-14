@@ -24,7 +24,7 @@ type Server struct {
 	Listener       net.Listener
 	Port           string
 	RateLimitPerIp map[string]*security.RateLimit
-	Config   *ServerConfig
+	Config         *ServerConfig
 	Serverer
 }
 
@@ -49,7 +49,7 @@ func (server *Server) HandleConnections() error {
 			log.Println("Failed to accept connection:", err)
 			continue
 		}
-		connection.SetReadDeadline(time.Now().Add(server.Config.SessionActiveInterval * time.Hour)) //Limiting connection to 2 Hours|Might delete later.
+		connection.SetReadDeadline(time.Now().Add(time.Duration(int64(server.Config.SessionActiveInterval) * int64(time.Hour)))) //Limiting connection to 2 Hours|Might delete later.
 
 		ip, errClientIp := utils.GetClientIP(connection.RemoteAddr())
 		if errClientIp != nil {
@@ -76,7 +76,7 @@ func (server *Server) HandleConnections() error {
 func (server *Server) CheckRateLimitMap(ip string) {
 	if _, exists := server.RateLimitPerIp[ip]; !exists {
 		server.RateLimitPerIp[ip] = new(security.RateLimit)
-		server.RateLimitPerIp[ip].CreateRateLimiter(server.Config.RateLimitMaxSessions, server.RateLimitMaxInputPerInterval, server.RateLimitRefillDuration)
+		server.RateLimitPerIp[ip].CreateRateLimiter(server.Config.RateLimitMaxSessions, server.Config.RateLimitMaxInputPerInterval, server.Config.RateLimitRefillDuration)
 	}
 }
 

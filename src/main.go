@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -12,13 +11,14 @@ var tcpServer server.Server
 
 func init() {
 	tcpServer = server.Server{}
+	tcpServer.Config = new(server.ServerConfig)
 }
 
 func main() {
 	fmt.Println("Starting Instance!")
 
-	tcpServer.Config.Load(os.Args[1]) //Load Server Confg 
-	tcpServer.Config.Print() //Print Server Config
+	tcpServer.Config.Load(os.Args[1])
+	tcpServer.Config.Print()
 
 	tcpServer.Setup()
 	tcpServer.HandleConnections()

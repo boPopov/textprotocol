@@ -57,7 +57,7 @@ func (rateLimit *RateLimit) Release() {
 func (commandRateLimit *CommandRateLimit) Setup(maxInputPerInterval int, refillDurationInterval int) {
 	commandRateLimit.MaxToken = maxInputPerInterval
 	commandRateLimit.AwailableTokens = commandRateLimit.MaxToken
-	commandRateLimit.RefillDuration = time.Duration(refillDurationInterval * time.Second)
+	commandRateLimit.RefillDuration = time.Duration(int64(refillDurationInterval) * int64(time.Second))
 	commandRateLimit.LastTimeRefilled = time.Now()
 }
 
@@ -67,6 +67,7 @@ func (commandRateLimit *CommandRateLimit) Allow() bool {
 
 	if timeDifferenceFromLastPing >= commandRateLimit.RefillDuration {
 		commandRateLimit.AwailableTokens = commandRateLimit.MaxToken
+		commandRateLimit.LastTimeRefilled = time.Now()
 	}
 
 	if commandRateLimit.AwailableTokens > 0 {

@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  tcp-server:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: tcp-server
+    ports:
+      - 4242:4242
+    networks:
+      - textprotocol
+
+  waf:
+    build: 
+      context: ./owasp
+      dockerfile: Dockerfile
+    container_name: waf-dos-protection
+    ports:
+      - 8080:80
+    networks:
+      - textprotocol
+
+networks:
+  textprotocol:

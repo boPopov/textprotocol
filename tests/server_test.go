@@ -14,7 +14,7 @@ import (
 func startServer() {
 	go func() {
 		tcpServer := server.Server{}
-		tcpServer.Port = "4242"
+		tcpServer.Config.Load(os.Getenv("TESTCONFIGPATH")) //Load Server Confg 
 		tcpServer.Setup()
 		tcpServer.HandleConnections()
 	}()

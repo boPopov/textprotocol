@@ -5,7 +5,7 @@ import(
 )
 
 type Configer interface {
-	Load() error
+	Load(path string) error
 	Print()
 }
 
@@ -18,8 +18,8 @@ type ServerConfig struct {
 	Configer
 }
 
-func (s *ServerConfig) Load() error {
-	file, err := os.Open("../../config.json")
+func (s *ServerConfig) Load(path) error {
+	file, err := os.Open(path)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return err 

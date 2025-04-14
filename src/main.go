@@ -14,34 +14,12 @@ func init() {
 	tcpServer = server.Server{}
 }
 
-func readJson() (port string, errEncountered error) {
-	file, err := os.Open("../config.json")
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		errEncountered = err
-		return
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-	errEncountered = decoder.Decode(&port)
-	if errEncountered != nil {
-		fmt.Println("Could not decode the JSON file:", err)
-		return
-	}
-	return
-}
-
 func main() {
 	fmt.Println("Starting Instance!")
 
-	port, err := readJson()
-	if err != nil {
-		fmt.Println("Could not extra the port, because of", err)
-	}
-	fmt.Println("Port is: ", port)
+	tcpServer.Config.Load() //Load Server Confg 
+	tcpServer.Config.Print() //Print Server Config
 
-	tcpServer.Port = "4242"
 	tcpServer.Setup()
 	tcpServer.HandleConnections()
 }

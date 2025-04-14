@@ -1,6 +1,7 @@
 package security
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -32,6 +33,9 @@ type CommandRateLimit struct {
 }
 
 func (rateLimit *RateLimit) CreateRateLimiter(maxSessions int, maxInputPerInterval int, refillDurationInterval int) {
+	fmt.Println("Max Sessions is: ", maxSessions)
+	fmt.Println("Max Input Per Interval is:", int64(maxInputPerInterval))
+	fmt.Println("Refill Duration Interval is:", int64(refillDurationInterval))
 	rateLimit.Channels = make(chan interface{}, maxSessions)
 	rateLimit.CommandRateLimit = new(CommandRateLimit)
 	rateLimit.CommandRateLimit.Setup(maxInputPerInterval, refillDurationInterval)
@@ -57,7 +61,7 @@ func (rateLimit *RateLimit) Release() {
 func (commandRateLimit *CommandRateLimit) Setup(maxInputPerInterval int, refillDurationInterval int) {
 	commandRateLimit.MaxToken = maxInputPerInterval
 	commandRateLimit.AwailableTokens = commandRateLimit.MaxToken
-	commandRateLimit.RefillDuration = time.Duration(refillDurationInterval * time.Second)
+	commandRateLimit.RefillDuration = time.Duration(int64(refillDurationInterval) * int64(time.Second))
 	commandRateLimit.LastTimeRefilled = time.Now()
 }
 
@@ -67,6 +71,7 @@ func (commandRateLimit *CommandRateLimit) Allow() bool {
 
 	if timeDifferenceFromLastPing >= commandRateLimit.RefillDuration {
 		commandRateLimit.AwailableTokens = commandRateLimit.MaxToken
+		commandRateLimit.LastTimeRefilled = time.Now()
 	}
 
 	if commandRateLimit.AwailableTokens > 0 {

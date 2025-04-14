@@ -17,7 +17,7 @@ func init() {
 func main() {
 	fmt.Println("Starting Instance!")
 
-	tcpServer.Config.Load() //Load Server Confg 
+	tcpServer.Config.Load(os.Args[1]) //Load Server Confg 
 	tcpServer.Config.Print() //Print Server Config
 
 	tcpServer.Setup()

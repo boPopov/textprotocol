@@ -7,6 +7,30 @@
 
 ## Environment Setup
 The current setup of the Application is Local. The plan is to create a Docker version of the application with Docker-compose in order to include nginx.
+
+---
+
+### Configuration
+Before running the application make sure the values in the `config.json` are set properly.
+```json
+{
+    "port": "4242",
+    "session_active_interval_hours": 2,
+    "rate_limit_max_sessions": 5,
+    "rate_limit_refill_duration_secods": 15,
+    "rate_limit_max_input_per_interval": 5
+}
+```
+The code snipped above is an example of what the config.json should look. </br>
+
+| Variable Name | Description | Value Type | Example Value |
+|---------------|-------------|------------|---------------|
+|    `port`     | Defining the Port which will be allocated from the server | `string` | '4242' |
+| `session_active_interval_hours` | This variable defines the live span of the connection that will be open from the client | `int` | 2 |
+| `rate_limit_max_sessions` | Defining the Maximum amount of sessions a user can open from a single IP | `int` | 5 |
+| `rate_limit_refill_duration_secods` | After this interval has passed the input per interval variable will be refresh with the `rate_limit_max_input_per_interval` | `int` | 15 |
+| `rate_limit_max_input_per_interval` | Defines how much commands can be intered in the specified duration interval from the `rate_limit_refill_duration_secods` variable | `int` | 5 |
+
 ### Local Setup
 In order to run the project you will need to have a [Golang version](https://go.dev/dl/). </br> 
 Make sure you follow the process of installing `Golang` on your Local machine. </br>

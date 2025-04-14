@@ -31,6 +31,8 @@ The code snipped above is an example of what the config.json should look. </br>
 | `rate_limit_refill_duration_secods` | After this interval has passed the input per interval variable will be refresh with the `rate_limit_max_input_per_interval` | `int` | 15 |
 | `rate_limit_max_input_per_interval` | Defines how much commands can be intered in the specified duration interval from the `rate_limit_refill_duration_secods` variable | `int` | 5 |
 
+There is also an additional `config_test.json` this `json` has the same variables as the `config.json`. However, this file is used for when running the tests.
+
 ### Local Setup
 In order to run the project you will need to have a [Golang version](https://go.dev/dl/). </br> 
 Make sure you follow the process of installing `Golang` on your Local machine. </br>

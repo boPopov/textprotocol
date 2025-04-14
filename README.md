@@ -1,11 +1,5 @@
 # Text Protocol
 
-Create a detailed README.md including:
-o Project overview
-o Installation instructions
-o Usage guide with example commands
-o Testing procedures (Bonus)
-
 ## Introduction
 `textprotocol` is a project written in Golang. The server allows you to make multiple connection through terminal and execute a commands that have execute operations inside the `tcp` server.
 
@@ -28,7 +22,7 @@ In order to install telnet on Windows, follow the instructions below:
 
 #### Linux
 In order to install telnet on Ubuntu/Debian run the following commands.
-```
+```bash
 sudo apt update
 sudo apt install telnet
 ```
@@ -36,20 +30,23 @@ sudo apt install telnet
 ## Running Application
 In order to run the application. 
 ### Local Run
-```
-cd src
-go run .
+```bash
+go run ./src $(pwd)/config.json
 ```
 
 ## Usage Guide
 Once you have installed `telnet`, `Golang` and the `TCP` server is up and running. Open a terminal PowerShell, CMD or Terminal (Linux) and run:
 
 ### If application is running on your Local Machine
-```telnet localhost 4242```.
+```bash
+telnet localhost 4242
+```
 
 ### If application is running on a machine inside your Network
 Find your local ip.
-```telnet YOUR.LOCAL.IP.HERE 4242```
+```bash
+telnet YOUR.LOCAL.IP.HERE 4242
+```
 
 ---
 There are a couple of commands avaible for usage. Please look at the table bellow.
@@ -61,3 +58,11 @@ There are a couple of commands avaible for usage. Please look at the table bello
 | `QUIT` | This command stops the connection between your Machine and the Server | 221 Bye | 
 
 ## Testing
+There are multiple unit tests that check the command behavior as well as the rate limit for connections. </br>
+
+You can execute the test with the following commands. </br>
+
+```bash
+cd tests
+CONFIG_PATH=/PATH/TO/PROJECT/textprotocol/config.json go test .
+```

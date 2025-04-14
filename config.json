@@ -1,3 +1,7 @@
 {
-    "port": "4242"
+    "port": "4242",
+    "session_active_interval_hours": 2,
+    "rate_limit_max_sessions": 5,
+    "rate_limit_refill_duration_secods": 15,
+    "rate_limit_max_input_per_interval": 5
 }

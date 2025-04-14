@@ -15,10 +15,10 @@ func init() {
 }
 
 func main() {
-	fmt.Println("Starting Instance!")
+	fmt.Println("Starting Program!")
 
-	tcpServer.Config.Load(os.Args[1]) //Load Server Confg 
-	tcpServer.Config.Print() //Print Server Config
+	tcpServer.Config.Load(os.Args[1])
+	tcpServer.Config.Print() //Remove line after testing
 
 	tcpServer.Setup()
 	tcpServer.HandleConnections()

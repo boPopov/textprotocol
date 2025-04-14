@@ -37,6 +37,11 @@ func (rateLimit *RateLimit) CreateRateLimiter(maxSessions int, maxInputPerInterv
 	rateLimit.CommandRateLimit.Setup(maxInputPerInterval, refillDurationInterval)
 }
 
+/**
+ * Function Allocate(), is responsible for Allocating a space for a connection.
+ * Each client from a given IP has maximum of 5 available connection.
+ * Once this function is called, we lock the function for the other.
+ */ 
 func (rateLimit *RateLimit) Allocate() bool {
 	rateLimit.Lock.Lock()
 

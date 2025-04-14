@@ -34,23 +34,26 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 		enteredProtocol := strings.TrimSpace(inputLine)
 
 		if strings.Contains(enteredProtocol, "EHLO") {
-			if len(enteredProtocol) <= 4 {
+			if len(enteredProtocol) <= 4 { //Add or section which checks if there is a second command for QUIT and DATE After EHLO
 				connection.Write([]byte("550 Invalid EHLO command. The name is missing!\n"))
 				continue
 			}
 			splitedProtocol := strings.Split(enteredProtocol, " ")
+			//Test Later
+			ehloName = strings.TrimSpace(splitedProtocol[len(splitedProtocol) - 1])
+			enteredProtocol = strings.TrimSpace(splitedProtocol[0])
 
-			if len(splitedProtocol) == 2 {
-				ehloName = strings.TrimSpace(splitedProtocol[1])
-				enteredProtocol = strings.TrimSpace(splitedProtocol[0])
-			} else {
-				for _, value := range splitedProtocol {
-					if len(value) > 0 && value != "EHLO" {
-						ehloName = value
-					}
-				}
-				enteredProtocol = "EHLO"
-			}
+			// if len(splitedProtocol) == 2 {
+			// 	ehloName = strings.TrimSpace(splitedProtocol[1])
+			// 	enteredProtocol = strings.TrimSpace(splitedProtocol[0])
+			// } else {
+			// 	for _, value := range splitedProtocol {
+			// 		if len(value) > 0 && value != "EHLO" {
+			// 			ehloName = value
+			// 		}
+			// 	}
+			// 	enteredProtocol = "EHLO"
+			// }
 		}
 
 		switch enteredProtocol {

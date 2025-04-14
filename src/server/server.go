@@ -24,16 +24,17 @@ type Server struct {
 	Listener       net.Listener
 	Port           string
 	RateLimitPerIp map[string]*security.RateLimit
+	Config   *ServerConfig
 	Serverer
 }
 
 func (server *Server) Setup() {
 	var err error
-	server.Listener, err = net.Listen("tcp", fmt.Sprintf(":%s", server.Port))
+	server.Listener, err = net.Listen("tcp", fmt.Sprintf(":%s", server.Config.Port))
 	if err != nil {
 		log.Fatalf("Failed to bind to port: %v", err)
 	}
-	log.Printf("Server is listening on port: %s...", server.Port) //Add new line here.
+	log.Printf("Server is listening on port: %s...", server.Config.Port) //Add new line here.
 	server.RateLimitPerIp = make(map[string]*security.RateLimit)
 }
 
@@ -48,7 +49,7 @@ func (server *Server) HandleConnections() error {
 			log.Println("Failed to accept connection:", err)
 			continue
 		}
-		connection.SetReadDeadline(time.Now().Add(2 * time.Hour)) //Limiting connection to 2 Hours|Might delete later.
+		connection.SetReadDeadline(time.Now().Add(server.Config.SessionActiveInterval * time.Hour)) //Limiting connection to 2 Hours|Might delete later.
 
 		ip, errClientIp := utils.GetClientIP(connection.RemoteAddr())
 		if errClientIp != nil {
@@ -75,7 +76,7 @@ func (server *Server) HandleConnections() error {
 func (server *Server) CheckRateLimitMap(ip string) {
 	if _, exists := server.RateLimitPerIp[ip]; !exists {
 		server.RateLimitPerIp[ip] = new(security.RateLimit)
-		server.RateLimitPerIp[ip].CreateRateLimiter()
+		server.RateLimitPerIp[ip].CreateRateLimiter(server.Config.RateLimitMaxSessions, server.RateLimitMaxInputPerInterval, server.RateLimitRefillDuration)
 	}
 }
 

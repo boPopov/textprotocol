@@ -23,7 +23,7 @@ type Server struct {
 	Listener       net.Listener
 	Port           string
 	RateLimitPerIp map[string]*security.RateLimit
-	Config   *ServerConfig
+	Config         *ServerConfig
 	Serverer
 }
 
@@ -32,7 +32,7 @@ func (server *Server) Setup() {
 	server.Listener, err = net.Listen("tcp", fmt.Sprintf(":%s", server.Config.Port))
 	if err != nil {
 		log.Fatalf("Failed to bind to port: %v", err)
-		panic() // Stopping the program if we can not bind the port specified in the config.json
+		panic(err) // Stopping the program if we can not bind the port specified in the config.json
 	}
 	log.Printf("Server is listening on port: %s...", server.Config.Port)
 	server.RateLimitPerIp = make(map[string]*security.RateLimit)
@@ -52,7 +52,7 @@ func (server *Server) HandleConnections() error {
 			log.Println("Failed to accept connection:", err)
 			continue
 		}
-		connection.SetReadDeadline(time.Now().Add(server.Config.SessionActiveInterval * time.Hour)) //Limiting connection to X Hours (X is specified in the config.json).
+		connection.SetReadDeadline(time.Now().Add(time.Duration(int64(server.Config.SessionActiveInterval) * int64(time.Hour)))) //Limiting connection to 2 Hours|Might delete later.
 
 		clientIp, errClientIp := utils.GetClientIP(connection.RemoteAddr())
 		if errClientIp != nil {
@@ -60,12 +60,12 @@ func (server *Server) HandleConnections() error {
 			continue
 		}
 
-		server.CheckIPPresence(clientIp) 
+		server.CheckIPPresence(clientIp)
 		if canAllocate := server.RateLimitPerIp[clientIp].Allocate(); !canAllocate {
 			connection.Write([]byte("You have reached the maximum amount of connections"))
 			connection.Close()
 		} else {
-			go connectionHandler.UserProtocolConnectionHandler(connection, server.RateLimitPerIp[ip]) //Add new package that will handle the logic behind the protocols
+			go connectionHandler.UserProtocolConnectionHandler(connection, server.RateLimitPerIp[clientIp]) //Add new package that will handle the logic behind the protocols
 		}
 	}
 
@@ -79,7 +79,7 @@ func (server *Server) HandleConnections() error {
 func (server *Server) CheckIPPresence(ip string) {
 	if _, exists := server.RateLimitPerIp[ip]; !exists {
 		server.RateLimitPerIp[ip] = new(security.RateLimit)
-		server.RateLimitPerIp[ip].CreateRateLimiter(server.Config.RateLimitMaxSessions, server.RateLimitMaxInputPerInterval, server.RateLimitRefillDuration)
+		server.RateLimitPerIp[ip].CreateRateLimiter(server.Config.RateLimitMaxSessions, server.Config.RateLimitMaxInputPerInterval, server.Config.RateLimitRefillDuration)
 	}
 }
 

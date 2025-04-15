@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"time"
 
 	connectionHandler "github.com/boPopov/textprotocol/src/protocols"
 	"github.com/boPopov/textprotocol/src/security"
@@ -52,7 +51,6 @@ func (server *Server) HandleConnections() error {
 			log.Println("Failed to accept connection:", err)
 			continue
 		}
-		connection.SetReadDeadline(time.Now().Add(time.Duration(int64(server.Config.SessionActiveInterval) * int64(time.Hour)))) //Limiting connection to 2 Hours|Might delete later.
 
 		clientIp, errClientIp := utils.GetClientIP(connection.RemoteAddr())
 		if errClientIp != nil {
@@ -65,7 +63,7 @@ func (server *Server) HandleConnections() error {
 			connection.Write([]byte("You have reached the maximum amount of connections"))
 			connection.Close()
 		} else {
-			go connectionHandler.UserProtocolConnectionHandler(connection, server.RateLimitPerIp[clientIp]) //Add new package that will handle the logic behind the protocols
+			go connectionHandler.UserProtocolConnectionHandler(connection, server.RateLimitPerIp[clientIp], server.Config.SessionActiveInterval, server.Config.ConnectionLifeSpanMinutes)
 		}
 	}
 

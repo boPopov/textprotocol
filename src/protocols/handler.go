@@ -10,7 +10,7 @@ import (
 	"github.com/boPopov/textprotocol/src/security"
 )
 
-func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.RateLimit) {
+func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.RateLimit, sessionActiveInterval int, connectionLifeSpanMinutes int) {
 	defer connection.Close()
 
 	connection.Write([]byte("220 localhost\n"))
@@ -18,10 +18,18 @@ func UserProtocolConnectionHandler(connection net.Conn, rateLimit *security.Rate
 	quit := false
 	ehloName := ""
 
+	go func() { //Setting the connection maximum lifespan.
+		time.Sleep(time.Duration(int64(connectionLifeSpanMinutes) * int64(time.Minute)))
+		connection.Close()
+	}()
+
 	for {
-		inputLine, err := reader.ReadString('\n') //Setting up the session reader stream.
+		connection.SetReadDeadline(time.Now().Add(time.Duration(int64(sessionActiveInterval) * int64(time.Second))))
+		inputLine, err := reader.ReadString('\n')
+
 		if err != nil {
 			fmt.Println("Error while reading the input", err)
+			rateLimit.Release()
 			break
 		}
 

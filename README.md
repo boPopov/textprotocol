@@ -151,6 +151,23 @@ Find your local ip and then execute the command below.
 telnet YOUR.LOCAL.IP.HERE PORT
 ```
 
+### Port
+The `PORT` can have any value of an available port on your machine. Also, if you run the application in docker then it has a different port. </br>
+
+If you run the application without `Docker`, use the value from inside the `config.json` -> `port`. </br>
+
+If you run the application with `docker-compose` use the value `8080`. If you can not use the port `8080`, navigate to `docker-compose.yml` and change the value under `ports` to:
+```yml
+lbl:
+    image: nginx
+    container_name: load_balancer
+    depends_on:
+      - tcp-server
+    ports:
+      - YOUR_AVAILABLE_PORT:8080
+```
+
+And finally, if you use the `Docker Application` process for running the application use the port defined in the `config.json`.
 
 ---
 There are a couple of commands avaible for usage. Please look at the table bellow.

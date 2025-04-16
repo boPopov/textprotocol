@@ -230,7 +230,7 @@ func TestInvalidCommand(t *testing.T) {
 	fmt.Println("after reading connection")
 	time.Sleep(200 * time.Millisecond)
 
-	bytesWritten, errCommandEntered := fmt.Fprintf(serverConnection, " STEFI\n")
+	bytesWritten, errCommandEntered := fmt.Fprintf(serverConnection, " BANANA\n")
 	if errCommandEntered != nil {
 		t.Fatalf("Failed to send command: %v", errCommandEntered)
 	}

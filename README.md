@@ -1,7 +1,7 @@
 # Text Protocol
 
 ## Introduction
-`textprotocol` is a project written in Golang. The server allows you to make multiple connection through terminal and execute a commands that execute operations inside the `tcp` server.
+`textprotocol` is a project written in Golang. The server allows you to make multiple connections through the terminal and execute commands that execute operations inside the `tcp` server.
 
 ---
 
@@ -22,8 +22,7 @@ git clone git@github.com:boPopov/textprotocol.git
 ### Docker Setup
 If you make a decision to go with the Docker setup follow the next steps:
 #### Windows
-Download [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/). Make sure to install the applicat
-ion. After the installation is completed open a terminal and run the command below:
+Download [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/). Make sure to install the application. After the installation is completed open a terminal and run the command below:
 ```bash
 docker --version
 ```
@@ -34,7 +33,7 @@ Docker version <Docker_Version>, build <id>
 #### Linux
 Follow the [installation guid](https://docs.docker.com/engine/install/ubuntu/) for installing Docker on Ubuntu or any other Linux OS you have. </br>
 
-After the installation is complted check if docker is successfully installed and setup on your machine:
+After the installation is completed check if docker is successfully installed and setup on your machine:
 ```bash
 docker --version
 ```
@@ -57,7 +56,7 @@ sudo apt install telnet
 ---
 
 ## Running Application
-As specified in the `Environment Setup` there are a two options to run the application, one is local and the second is through Docker.
+As specified in the `Environment Setup` there are two options to run the application, one is local and the second is through Docker.
 
 ### Configuration
 Before running the application make sure the values in the `config.json` are set properly.
@@ -76,11 +75,11 @@ The code snipped above is an example of what the config.json should look. </br>
 | Variable Name | Description | Value Type | Example Value |
 |---------------|-------------|------------|---------------|
 |    `port`     | Defining the Port which will be allocated from the server | `string` | '4242' |
-| `session_active_interval_hours` | This variable defines the live span of the connection if no input is comming from the stream. | `int` | 2 |
+| `session_active_interval_hours` | This variable defines the livespan of the connection if no input is coming from the stream. | `int` | 2 |
 | `rate_limit_max_sessions` | Defining the Maximum amount of sessions a user can open from a single IP | `int` | 5 |
 | `rate_limit_refill_duration_secods` | After this interval has passed the input per interval variable will be refresh with the `rate_limit_max_input_per_interval` | `int` | 15 |
-| `rate_limit_max_input_per_interval` | Defines how much commands can be intered in the specified duration interval from the `rate_limit_refill_duration_secods` variable | `int` | 5 |
-| `connection_life_span_minutes` | Defines the connection life span, how much an active connection can last. | 30 | 
+| `rate_limit_max_input_per_interval` | Defines how much commands can be entered in the specified duration interval from the `rate_limit_refill_duration_secods` variable | `int` | 5 |
+| `connection_life_span_minutes` | Defines the connection lifespan, how much an active connection can last. | 30 | 
 
 There is also an additional `config_test.json` this `json` has the same variables as the `config.json`. However, this file is used for when running the tests.
 
@@ -102,7 +101,7 @@ go run .\\src\\ .\\config.json
 ```
 
 ### Docker Execution
-Befor explaining the process for starting the application in Docker make sure the docker engine is running.</br>
+Before explaining the process for starting the application in Docker make sure the docker engine is running.</br>
 For windows start `Docker Desktop`, for Linux try to access the `docker`. </br>
 There are no different commands for Windows and Linux:
 ```bash
@@ -134,7 +133,7 @@ docker ps # Find the textprotocol docker_id
 docker stop <docker_id>
 ```
 
-The provided commands must be used for Linux, as for Windows you have to use the build command, after that you can do all of the commands, runing the application and stoping the application, inside the `Docker Desktop`.
+The provided commands must be used for Linux, as for Windows you have to use the build command, after that you can do all of the commands, running the application and stopping the application, inside the `Docker Desktop`.
 
 ## Usage Guide
 Once you have installed `telnet`, `Golang` and the `TCP` server is up and running. Open a terminal PowerShell, CMD, Windows Terminal or Terminal (Linux) and run:
@@ -169,11 +168,11 @@ lbl:
 And finally, if you use the `Docker Application` process for running the application use the port defined in the `config.json`.
 
 ---
-There are a couple of commands avaible for usage. Please look at the table bellow.
+There are a couple of commands available for usage. Please look at the table below.
 
 | Command Name | Description | Responses |
 |--------------|-------------|-----------|
-| `EHLO` | The command EHLO, expects a string after the command. After the EHLO name command is entered you can execute the DATE command | 250 Pleased to meet you NAME |
+| `EHLO` | The command EHLO expects a string after the command. After the EHLO name command is entered you can execute the DATE command | 250 Pleased to meet you NAME |
 | `DATE` | This command returns the current date and time if the command EHLO was successfully executed before. | Positive response - 250 21/10/2016T14:13:08; Negative Response - 550 Bad state |
 | `QUIT` | This command stops the connection between your Machine and the Server | 221 Bye | 
 

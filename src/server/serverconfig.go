@@ -13,10 +13,11 @@ type Configer interface {
 
 type ServerConfig struct {
 	Port                         string `json:"port"`
-	SessionActiveInterval        int    `json:"session_active_interval_hours"`
+	SessionActiveInterval        int    `json:"session_active_interval_seconds"`
 	RateLimitMaxSessions         int    `json:"rate_limit_max_sessions"`
 	RateLimitRefillDuration      int    `json:"rate_limit_refill_duration_secods"`
 	RateLimitMaxInputPerInterval int    `json:"rate_limit_max_input_per_interval"`
+	ConnectionLifeSpanMinutes    int    `json:"connection_life_span_minutes"`
 	Configer
 }
 
@@ -34,5 +35,5 @@ func (s *ServerConfig) Load(path string) error {
 }
 
 func (s *ServerConfig) Print() {
-	fmt.Printf("Port: %s\nSessionActiveInterval: %d\nRateLimitMaxSessions: %d\nRateLimitRefillDuration: %d\nRateLimitMaxInputPerInterval: %d\n", s.Port, s.SessionActiveInterval, s.RateLimitMaxSessions, s.RateLimitRefillDuration, s.RateLimitMaxInputPerInterval)
+	fmt.Printf("Port: %s\nSessionActiveInterval: %d\nRateLimitMaxSessions: %d\nRateLimitRefillDuration: %d\nRateLimitMaxInputPerInterval: %d\n,ConnectionLifeSpanMinutes: %d\n", s.Port, s.SessionActiveInterval, s.RateLimitMaxSessions, s.RateLimitRefillDuration, s.RateLimitMaxInputPerInterval, s.ConnectionLifeSpanMinutes)
 }

@@ -18,7 +18,7 @@ func main() {
 	fmt.Println("Starting Program!")
 
 	tcpServer.Config.Load(os.Args[1])
-	tcpServer.Config.Print()
+	// tcpServer.Config.Print()
 
 	tcpServer.Setup()
 	tcpServer.HandleConnections()

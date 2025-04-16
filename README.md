@@ -10,6 +10,32 @@ There are two options for your environment setup.
 1) Local Setup - Setup your local machine to be able to run the application.
 2) Docker Setup - Setup Docker for running the application.
 
+### Configuration
+Before running the application make sure the values in the `config.json` are set properly.
+```json
+{
+    "port": "4242",
+    "session_active_interval_hours": 2,
+    "rate_limit_max_sessions": 5,
+    "rate_limit_refill_duration_secods": 15,
+    "rate_limit_max_input_per_interval": 5,
+    "connection_life_span_minutes": 30
+}
+```
+The code snipped above is an example of what the config.json should look. </br>
+
+| Variable Name | Description | Value Type | Example Value |
+|---------------|-------------|------------|---------------|
+|    `port`     | Defining the Port which will be allocated from the server | `string` | '4242' |
+| `session_active_interval_hours` | This variable defines the live span of the connection if no input is comming from the stream. | `int` | 2 |
+| `rate_limit_max_sessions` | Defining the Maximum amount of sessions a user can open from a single IP | `int` | 5 |
+| `rate_limit_refill_duration_secods` | After this interval has passed the input per interval variable will be refresh with the `rate_limit_max_input_per_interval` | `int` | 15 |
+| `rate_limit_max_input_per_interval` | Defines how much commands can be intered in the specified duration interval from the `rate_limit_refill_duration_secods` variable | `int` | 5 |
+| `connection_life_span_minutes` | Defines the connection life span, how much an active connection can last. | 30 | 
+
+There is also an additional `config_test.json` this `json` has the same variables as the `config.json`. However, this file is used for when running the tests.
+
+
 ### Local Setup
 In order to run the project you will need to have a [Golang version](https://go.dev/dl/). </br> 
 Make sure you follow the process of installing `Golang` on your Local machine. </br>
@@ -120,10 +146,11 @@ telnet localhost PORT
 ```
 
 ### If application is running on a machine inside your Network
-Find your local ip.
+Find your local ip and then execute the command below.
 ```bash
 telnet YOUR.LOCAL.IP.HERE PORT
 ```
+
 
 ---
 There are a couple of commands avaible for usage. Please look at the table bellow.

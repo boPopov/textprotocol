@@ -1,7 +1,7 @@
 # Text Protocol
 
 ## Introduction
-`textprotocol` is a project written in Golang. The server allows you to make multiple connection through terminal and execute a commands that have execute operations inside the `tcp` server.
+`textprotocol` is a project written in Golang. The server allows you to make multiple connection through terminal and execute a commands that execute operations inside the `tcp` server.
 
 ---
 
@@ -15,6 +15,9 @@ In order to run the project you will need to have a [Golang version](https://go.
 Make sure you follow the process of installing `Golang` on your Local machine. </br>
 Choose the downloading Go package based on your OS. </br> 
 After the installation process, make sure you clone the project on your machine. </br>
+```bash
+git clone git@github.com:boPopov/textprotocol.git
+```
 
 ### Docker Setup
 If you make a decision to go with the Docker setup follow the next steps:
@@ -51,13 +54,12 @@ sudo apt update
 sudo apt install telnet
 ```
 
+---
+
 ## Running Application
 As specified in the `Environment Setup` there are a two options to run the application, one is local and the second is through Docker.
 
 ### Local Execution
-In the local scenario you can find the commands for running the application throu
-gh Golang.
-
 #### Linux
 Open terminal, navigate to the project
 ```bash
@@ -69,7 +71,6 @@ go run ./src $(pwd)/config.json
 ```
 
 #### Windows
-The scenario for executing the application in Windows it is very simular to the Linux. </br>
 Navigate to the folder for `textprotocol`. Open a `PowerShell` or `Cmd` or `Windows Terminal` and execute the command below.
 ```bash
 go run .\\src\\ .\\config.json
@@ -83,7 +84,7 @@ There are no different commands for Windows and Linux:
 # To start the application run
 docker-compose up -d
 ```
-The service then will be avialable through `Nginx` on `localhost:8080`.
+The application will be reachable through `Nginx` on `localhost:8080`.
 
 ```bash
 # To stop the application run
@@ -108,83 +109,20 @@ docker ps # Find the textprotocol docker_id
 docker stop <docker_id>
 ```
 
-The commands must be used for Linux, as for Windows you have to use the build command, after that you can do all of the commands inside the `Docker Desktop` application.
+The provided commands must be used for Linux, as for Windows you have to use the build command, after that you can do all of the commands, runing the application and stoping the application, inside the `Docker Desktop`.
 
 ## Usage Guide
-Once you have installed `telnet`, `Golang` and the `TCP` server is up and running. Open a terminal PowerShell, CMD or Terminal (Linux) and run:
+Once you have installed `telnet`, `Golang` and the `TCP` server is up and running. Open a terminal PowerShell, CMD, Windows Terminal or Terminal (Linux) and run:
 
 ### If application is running on your Local Machine
 ```bash
-telnet localhost 4242
+telnet localhost PORT
 ```
 
 ### If application is running on a machine inside your Network
 Find your local ip.
 ```bash
-telnet YOUR.LOCAL.IP.HERE 4242
-```
-
----
-There are a couple of commands avaible for usage. Please look u
-### Local Run
-```bash
-go run ./src $(pwd)/config.json
-```
-
-## Usage Guide
-Once you have installed `telnet`, `Golang` and the `TCP` server is up and running. Open a terminal PowerShell, CMD or Terminal (Linux) and run:
-
-### If application is running on your Local Machine
-```bash
-telnet localhost 4242
-```
-
-### If application is running on a machine inside your Network
-Find your local ip.
-```bash
-telnet YOUR.LOCAL.IP.HERE 4242
-```
-
----
-There are a couple of commands avaible for usage. Please look h
-### Local Run
-```bash
-go run ./src $(pwd)/config.json
-```
-
-## Usage Guide
-Once you have installed `telnet`, `Golang` and the `TCP` server is up and running. Open a terminal PowerShell, CMD or Terminal (Linux) and run:
-
-### If application is running on your Local Machine
-```bash
-telnet localhost 4242
-```
-
-### If application is running on a machine inside your Network
-Find your local ip.
-```bash
-telnet YOUR.LOCAL.IP.HERE 4242
-```
-
----
-There are a couple of commands avaible for usage. Please look
-### Local Run
-```bash
-go run ./src $(pwd)/config.json
-```
-
-## Usage Guide
-Once you have installed `telnet`, `Golang` and the `TCP` server is up and running. Open a terminal PowerShell, CMD or Terminal (Linux) and run:
-
-### If application is running on your Local Machine
-```bash
-telnet localhost 4242
-```
-
-### If application is running on a machine inside your Network
-Find your local ip.
-```bash
-telnet YOUR.LOCAL.IP.HERE 4242
+telnet YOUR.LOCAL.IP.HERE PORT
 ```
 
 ---
